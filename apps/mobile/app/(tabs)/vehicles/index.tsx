@@ -1,5 +1,5 @@
-import { PlaceholderScreen } from '@/components/ui/PlaceholderScreen';
+import { CategoryListScreen } from '@/components/category/CategoryListScreen';
 
 export default function VehiclesScreen() {
-  return <PlaceholderScreen title="Vehicles" subtitle="Coming soon" />;
+  return <CategoryListScreen category="vehicles" />;
 }

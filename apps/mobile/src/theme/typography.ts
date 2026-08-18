@@ -2,10 +2,11 @@ export const typography = {
   fontFamily: {
     regular: 'System',
     bold: 'System',
+    mono: 'Courier',
   },
   size: {
-    xs: 12,
-    sm: 14,
+    xs: 11,
+    sm: 13,
     md: 16,
     lg: 20,
     xl: 28,

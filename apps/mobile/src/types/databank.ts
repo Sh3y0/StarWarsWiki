@@ -17,9 +17,5 @@ export interface DatabankItem {
   };
   alt_text?: string;
   href?: string;
+  type?: string;
 }
-
-// The backend's /api/characters endpoint returns Databank items directly, so this is
-// an alias for now. Films/Starships/Vehicles/Planets get their own shapes once their
-// screens are wired up to the API.
-export type Character = DatabankItem;

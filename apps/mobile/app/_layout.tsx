@@ -36,6 +36,7 @@ export default function RootLayout() {
             screenOptions={{
               headerStyle: { backgroundColor: theme.colors.background },
               headerTintColor: theme.colors.textPrimary,
+              headerBackTitle: 'Back',
               contentStyle: { backgroundColor: theme.colors.background },
             }}
           >

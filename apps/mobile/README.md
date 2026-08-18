@@ -45,7 +45,7 @@ npm run android  # Android Emulator
 npm run web      # web
 ```
 
-Only the **Characters** tab is wired to real data for now (`GET /api/characters` on the backend); the other 5 tabs and all detail screens are placeholders, to be built out screen-by-screen against the Stitch designs.
+Each tab (Characters, Films, Starships, Vehicles, Planets) has a searchable list and a detail screen, styled after the Stitch **Star Wars Galactic Archives** designs. Lists and details come from the backend SWAPI proxy (`GET /api/swapi/{people,films,starships,vehicles,planets}`), using Databank images/descriptions where the API enriches them, and local film posters for movies.
 
 ## Project structure
 
@@ -53,12 +53,12 @@ Only the **Characters** tab is wired to real data for now (`GET /api/characters`
 /app                    # Expo Router routes
   _layout.tsx            # root layout: QueryClientProvider, styled-components ThemeProvider
   /(tabs)                # bottom tab navigator
-  /characters/[slug].tsx  # detail routes (one per category)
+  /characters/[id].tsx    # detail routes (one per category, SWAPI numeric id)
   ...
 /src
-  /api                    # HTTP client, typed endpoints, Zod schemas
-  /components/ui          # generic UI components (Card, SearchBar, PlaceholderScreen)
-  /components/category    # catalog-specific components (CategoryGrid)
+  /api                    # HTTP client, typed endpoints, Zod schemas, SWAPI mappers
+  /components/ui          # generic UI components (SearchBar, PlaceholderScreen)
+  /components/category    # shared list/detail screens, cards, stats, related rows
   /hooks                  # TanStack Query hooks
   /theme                  # colors, typography, styled-components theme typing
   /types                  # shared TS types
@@ -84,4 +84,4 @@ Only the **Characters** tab is wired to real data for now (`GET /api/characters`
 npm test
 ```
 
-Includes a unit test for a UI component (`PlaceholderScreen`) and for the `useCategoryList` hook (mocking the API layer).
+Includes a unit test for a UI component (`PlaceholderScreen`), catalog mappers/format helpers, and the `useCatalogList` hook (mocking the API layer).

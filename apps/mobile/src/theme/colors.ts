@@ -1,13 +1,12 @@
-// Placeholder palette: black/white base with gold + blue accents, per the project brief.
-// Will be swapped for the exact values once the Stitch design is ready.
 export const colors = {
-  background: '#000000',
-  surface: '#141414',
-  surfaceAlt: '#1F1F1F',
-  border: '#2A2A2A',
-  textPrimary: '#FFFFFF',
-  textSecondary: '#B3B3B3',
-  accentGold: '#FFD75E',
-  accentBlue: '#4DA6FF',
-  error: '#FF5C5C',
+  background: '#151409',
+  surface: '#1e1c10',
+  surfaceAlt: '#2c2a1e',
+  border: '#3c392c',
+  textPrimary: '#e8e2cf',
+  textSecondary: '#969178',
+  accentCyan: '#4DF0FF',
+  accentGold: '#fbe419',
+  accentRed: '#FF0033',
+  error: '#ffb4ab',
 } as const;
