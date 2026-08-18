@@ -1,12 +1,25 @@
 import { getAllItems } from '../databank/databank.service';
 import type { DatabankItem } from '../databank/databank.types';
-import { fetchPeople, fetchPerson, fetchStarship, fetchStarships } from './swapi.client';
+import {
+  fetchPeople,
+  fetchPerson,
+  fetchPlanet,
+  fetchPlanets,
+  fetchStarship,
+  fetchStarships,
+  fetchVehicle,
+  fetchVehicles,
+} from './swapi.client';
 import { findBestMatch } from './swapi.matching';
 import type {
   EnrichedCharacter,
+  EnrichedPlanet,
   EnrichedStarship,
+  EnrichedVehicle,
   SwapiPerson,
+  SwapiPlanet,
   SwapiStarship,
+  SwapiVehicle,
 } from './swapi.types';
 import { extractIdFromUrl, extractPageNumber } from './swapi.utils';
 
@@ -27,32 +40,59 @@ function findDatabankMatch(name: string, items: DatabankItem[]): DatabankItem | 
   return findBestMatch(name, items, (item) => item.title);
 }
 
+// Some SWAPI vehicles/starships have no counterpart in the Databank under their in-universe
+// `name` (e.g. "Rebel transport"), but their `model` does (e.g. "GR-75 medium transport" ->
+// "GR-75 Medium Transport"), so fall back to matching on model when the name doesn't resolve.
+function findDatabankMatchByNameOrModel(
+  entity: { name: string; model: string },
+  items: DatabankItem[],
+): DatabankItem | null {
+  return findDatabankMatch(entity.name, items) ?? findDatabankMatch(entity.model, items);
+}
+
 function extractIds(urls: string[]): string[] {
   return urls.map((url) => extractIdFromUrl(url));
 }
 
 function enrichPerson(person: SwapiPerson, items: DatabankItem[]): EnrichedCharacter {
-  const { url, starships, ...rest } = person;
+  const { url, homeworld, starships, vehicles, ...rest } = person;
   return {
     ...rest,
     character_id: extractIdFromUrl(url),
+    homeworld: extractIdFromUrl(homeworld),
     starships: extractIds(starships),
+    vehicles: extractIds(vehicles),
     databank: findDatabankMatch(person.name, items),
   };
 }
 
 function enrichStarship(starship: SwapiStarship, items: DatabankItem[]): EnrichedStarship {
   const { url, pilots, ...rest } = starship;
-  // Some SWAPI starship names have no counterpart in the Databank (e.g. "Rebel transport"),
-  // but their model does (e.g. "GR-75 medium transport" -> "GR-75 Medium Transport"),
-  // so fall back to matching on model when the name doesn't resolve.
-  const databank =
-    findDatabankMatch(starship.name, items) ?? findDatabankMatch(starship.model, items);
   return {
     ...rest,
     starship_id: extractIdFromUrl(url),
     pilots: extractIds(pilots),
-    databank,
+    databank: findDatabankMatchByNameOrModel(starship, items),
+  };
+}
+
+function enrichVehicle(vehicle: SwapiVehicle, items: DatabankItem[]): EnrichedVehicle {
+  const { url, pilots, ...rest } = vehicle;
+  return {
+    ...rest,
+    vehicle_id: extractIdFromUrl(url),
+    pilots: extractIds(pilots),
+    databank: findDatabankMatchByNameOrModel(vehicle, items),
+  };
+}
+
+function enrichPlanet(planet: SwapiPlanet, items: DatabankItem[]): EnrichedPlanet {
+  const { url, residents, ...rest } = planet;
+  return {
+    ...rest,
+    planet_id: extractIdFromUrl(url),
+    residents: extractIds(residents),
+    databank: findDatabankMatch(planet.name, items),
   };
 }
 
@@ -114,4 +154,64 @@ export async function getStarshipById(id: string): Promise<EnrichedStarship | nu
   }
 
   return enrichStarship(starship, databankItems);
+}
+
+export async function getVehicles(
+  options: GetSwapiListOptions = {},
+): Promise<GetSwapiListResult<EnrichedVehicle>> {
+  const isSearch = Boolean(options.search);
+
+  const [swapiResponse, databankItems] = await Promise.all([
+    isSearch
+      ? fetchVehicles({ search: options.search })
+      : fetchVehicles({ page: options.page ?? 1 }),
+    getAllItems('vehicles'),
+  ]);
+
+  return {
+    count: swapiResponse.count,
+    currentPage: isSearch ? null : (options.page ?? 1),
+    nextPage: extractPageNumber(swapiResponse.next),
+    previousPage: extractPageNumber(swapiResponse.previous),
+    results: swapiResponse.results.map((vehicle) => enrichVehicle(vehicle, databankItems)),
+  };
+}
+
+export async function getVehicleById(id: string): Promise<EnrichedVehicle | null> {
+  const [vehicle, databankItems] = await Promise.all([fetchVehicle(id), getAllItems('vehicles')]);
+
+  if (!vehicle) {
+    return null;
+  }
+
+  return enrichVehicle(vehicle, databankItems);
+}
+
+export async function getPlanets(
+  options: GetSwapiListOptions = {},
+): Promise<GetSwapiListResult<EnrichedPlanet>> {
+  const isSearch = Boolean(options.search);
+
+  const [swapiResponse, databankItems] = await Promise.all([
+    isSearch ? fetchPlanets({ search: options.search }) : fetchPlanets({ page: options.page ?? 1 }),
+    getAllItems('locations'),
+  ]);
+
+  return {
+    count: swapiResponse.count,
+    currentPage: isSearch ? null : (options.page ?? 1),
+    nextPage: extractPageNumber(swapiResponse.next),
+    previousPage: extractPageNumber(swapiResponse.previous),
+    results: swapiResponse.results.map((planet) => enrichPlanet(planet, databankItems)),
+  };
+}
+
+export async function getPlanetById(id: string): Promise<EnrichedPlanet | null> {
+  const [planet, databankItems] = await Promise.all([fetchPlanet(id), getAllItems('locations')]);
+
+  if (!planet) {
+    return null;
+  }
+
+  return enrichPlanet(planet, databankItems);
 }

@@ -3,18 +3,42 @@ const SUBSTRING_MATCH_SCORE = 1.5;
 const MIN_TOKEN_LENGTH = 3;
 const MIN_TOKENS_FOR_OVERLAP_MATCH = 2;
 
+// Star Wars planet/location designations often swap between a roman numeral and a plain
+// digit (SWAPI's "Yavin IV" vs the Databank's "Yavin 4"); normalize both to the digit form
+// so they line up. Applied per-word, so it never touches letters inside a longer word.
+const ROMAN_NUMERALS: Record<string, string> = {
+  i: '1',
+  ii: '2',
+  iii: '3',
+  iv: '4',
+  v: '5',
+  vi: '6',
+  vii: '7',
+  viii: '8',
+  ix: '9',
+  x: '10',
+};
+
 function normalize(value: string): string {
   return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
-    .replace(/\s+/g, ' ');
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => ROMAN_NUMERALS[word] ?? word)
+    .join(' ');
 }
 
 function tokenize(value: string): string[] {
   return normalize(value)
     .split(' ')
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
+}
+
+/** Normalized form with spaces removed too, so "Sand Crawler" lines up with "Sandcrawler". */
+function compact(value: string): string {
+  return normalize(value).replace(/\s+/g, '');
 }
 
 /**
@@ -35,7 +59,8 @@ function tokenSubsetScore(shorterTokens: string[], longerNormalized: string): nu
  * Finds the best-matching item for `name` among `items`, comparing against each item's title
  * (via `getTitle`). Handles the naming drift between SWAPI's `name` and the Databank's `title`
  * (e.g. "Calamari Cruiser" vs "Mon Calamari Star Cruiser") using three tiers, most confident first:
- *   1. exact match (normalized)
+ *   1. exact match (normalized, or equal once whitespace is stripped too — e.g.
+ *      "Sand Crawler" vs "Sandcrawler")
  *   2. one string fully contains the other (normalized)
  *   3. all significant tokens (length >= 3) of the shorter string are found in the longer string
  * Ties within a tier are broken by picking the title whose length is closest to the name's,
@@ -64,7 +89,7 @@ export function findBestMatch<T>(
     const normalizedTitle = normalize(title);
 
     let score: number;
-    if (normalizedTitle === normalizedName) {
+    if (normalizedTitle === normalizedName || compact(title) === compact(name)) {
       score = EXACT_MATCH_SCORE;
     } else if (
       normalizedTitle.includes(normalizedName) ||

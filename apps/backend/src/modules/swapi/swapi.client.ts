@@ -2,8 +2,12 @@ import { env } from '../../config/env';
 import type {
   SwapiPeopleResponse,
   SwapiPerson,
+  SwapiPlanet,
+  SwapiPlanetsResponse,
   SwapiStarship,
   SwapiStarshipsResponse,
+  SwapiVehicle,
+  SwapiVehiclesResponse,
 } from './swapi.types';
 
 function swapiBase(): string {
@@ -69,4 +73,22 @@ export async function fetchStarships(
 
 export async function fetchStarship(id: string): Promise<SwapiStarship | null> {
   return fetchOne<SwapiStarship>('starships', id);
+}
+
+export async function fetchVehicles(
+  options: FetchListOptions = {},
+): Promise<SwapiVehiclesResponse> {
+  return fetchList<SwapiVehiclesResponse>('vehicles', options);
+}
+
+export async function fetchVehicle(id: string): Promise<SwapiVehicle | null> {
+  return fetchOne<SwapiVehicle>('vehicles', id);
+}
+
+export async function fetchPlanets(options: FetchListOptions = {}): Promise<SwapiPlanetsResponse> {
+  return fetchList<SwapiPlanetsResponse>('planets', options);
+}
+
+export async function fetchPlanet(id: string): Promise<SwapiPlanet | null> {
+  return fetchOne<SwapiPlanet>('planets', id);
 }

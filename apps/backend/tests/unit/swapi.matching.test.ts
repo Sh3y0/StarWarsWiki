@@ -65,4 +65,16 @@ describe('findBestMatch', () => {
   it('is case-insensitive', () => {
     expect(match('c-3po', ['C-3PO (See-Threepio)'])).toBe('C-3PO (See-Threepio)');
   });
+
+  it('treats a spaced name and a compound-word title as an exact match', () => {
+    expect(match('Sand Crawler', ['Sandcrawler', 'Turtle Tanker'])).toBe('Sandcrawler');
+  });
+
+  it('treats a roman numeral and its digit form as an exact match', () => {
+    expect(match('Yavin IV', ['Yavin 4', 'Yavin System'])).toBe('Yavin 4');
+  });
+
+  it('does not let roman-numeral normalization break plain letter-prefixed names', () => {
+    expect(match('X-wing', ['X-wing Starfighter', 'V-wing Fighter'])).toBe('X-wing Starfighter');
+  });
 });

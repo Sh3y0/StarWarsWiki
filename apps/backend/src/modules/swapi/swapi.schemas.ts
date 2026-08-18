@@ -8,6 +8,8 @@ export const swapiListQuerySchema = z.object({
 
 export const getCharactersQuerySchema = swapiListQuerySchema;
 export const getStarshipsQuerySchema = swapiListQuerySchema;
+export const getVehiclesQuerySchema = swapiListQuerySchema;
+export const getPlanetsQuerySchema = swapiListQuerySchema;
 
 export const numericIdParamSchema = z.object({
   id: z.string().regex(/^\d+$/, 'id must be numeric'),
@@ -15,6 +17,8 @@ export const numericIdParamSchema = z.object({
 
 export const characterIdParamSchema = numericIdParamSchema;
 export const starshipIdParamSchema = numericIdParamSchema;
+export const vehicleIdParamSchema = numericIdParamSchema;
+export const planetIdParamSchema = numericIdParamSchema;
 
 export const enrichedCharacterSchema = z
   .object({
@@ -81,3 +85,65 @@ export const getStarshipsResponseSchema = z.object({
 });
 
 export const getStarshipResponseSchema = enrichedStarshipSchema;
+
+export const enrichedVehicleSchema = z
+  .object({
+    vehicle_id: z.string(),
+    name: z.string(),
+    model: z.string(),
+    manufacturer: z.string(),
+    cost_in_credits: z.string(),
+    length: z.string(),
+    max_atmosphering_speed: z.string(),
+    crew: z.string(),
+    passengers: z.string(),
+    cargo_capacity: z.string(),
+    consumables: z.string(),
+    vehicle_class: z.string(),
+    pilots: z.array(z.string()),
+    films: z.array(z.string()),
+    created: z.string(),
+    edited: z.string(),
+    databank: databankItemSchema.nullable(),
+  })
+  .passthrough();
+
+export const getVehiclesResponseSchema = z.object({
+  count: z.number(),
+  currentPage: z.number().nullable(),
+  nextPage: z.number().nullable(),
+  previousPage: z.number().nullable(),
+  results: z.array(enrichedVehicleSchema),
+});
+
+export const getVehicleResponseSchema = enrichedVehicleSchema;
+
+export const enrichedPlanetSchema = z
+  .object({
+    planet_id: z.string(),
+    name: z.string(),
+    rotation_period: z.string(),
+    orbital_period: z.string(),
+    diameter: z.string(),
+    climate: z.string(),
+    gravity: z.string(),
+    terrain: z.string(),
+    surface_water: z.string(),
+    population: z.string(),
+    residents: z.array(z.string()),
+    films: z.array(z.string()),
+    created: z.string(),
+    edited: z.string(),
+    databank: databankItemSchema.nullable(),
+  })
+  .passthrough();
+
+export const getPlanetsResponseSchema = z.object({
+  count: z.number(),
+  currentPage: z.number().nullable(),
+  nextPage: z.number().nullable(),
+  previousPage: z.number().nullable(),
+  results: z.array(enrichedPlanetSchema),
+});
+
+export const getPlanetResponseSchema = enrichedPlanetSchema;
