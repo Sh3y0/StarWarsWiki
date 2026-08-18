@@ -1,0 +1,24 @@
+{
+  "name": "star-wars-wiki",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "backend:dev": "npm run dev --workspace=apps/backend",
+    "backend:build": "npm run build --workspace=apps/backend",
+    "backend:test": "npm run test --workspace=apps/backend",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0"
+  },
+  "lint-staged": {
+    "apps/backend/**/*.ts": [
+      "npm run lint:fix --workspace=apps/backend --",
+      "npm run format --workspace=apps/backend --"
+    ]
+  }
+}
