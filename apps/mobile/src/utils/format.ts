@@ -74,3 +74,10 @@ export function databankImageUrl(
 export function relatedIds(ids: string[], limit = 8): string[] {
   return ids.filter(Boolean).slice(0, limit);
 }
+
+export function crawlParagraphs(value: string): string[] {
+  return value
+    .split(/\r?\n\s*\r?\n/)
+    .map((paragraph) => paragraph.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+}

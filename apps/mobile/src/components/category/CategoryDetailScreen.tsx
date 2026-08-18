@@ -1,8 +1,10 @@
-import { ActivityIndicator, ScrollView } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import styled, { useTheme } from 'styled-components/native';
 import { useCatalogDetail } from '../../hooks/useCatalogDetail';
+import { crawlParagraphs } from '../../utils/format';
 import { PlaceholderScreen } from '../ui/PlaceholderScreen';
 import { RelatedSection } from './RelatedSection';
 import { StatsGrid } from './StatsGrid';
@@ -19,6 +21,10 @@ const Centered = styled.View`
   justify-content: center;
 `;
 
+const HeroWrap = styled.View`
+  width: 100%;
+`;
+
 const Hero = styled(Image)`
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -26,7 +32,8 @@ const Hero = styled(Image)`
 `;
 
 const Content = styled.View`
-  padding: 20px 16px 40px 16px;
+  padding: 00px 16px 40px 16px;
+  margin-top: -40px;
 `;
 
 const Kicker = styled.Text`
@@ -57,6 +64,21 @@ const Description = styled.Text`
   line-height: 22px;
 `;
 
+const Crawl = styled.View`
+  margin-top: 24px;
+  padding: 8px 4px 4px 4px;
+`;
+
+const CrawlParagraph = styled.Text`
+  margin-bottom: 22px;
+  color: ${({ theme }) => theme.colors.accentGold};
+  font-size: ${({ theme }) => theme.typography.size.md}px;
+  font-style: italic;
+  font-weight: ${({ theme }) => theme.typography.weight.bold};
+  text-align: center;
+  line-height: 26px;
+`;
+
 export interface CategoryDetailScreenProps {
   category: CatalogCategory;
   id?: string;
@@ -82,12 +104,32 @@ export function CategoryDetailScreen({ category, id }: CategoryDetailScreenProps
     <Screen>
       <Stack.Screen options={{ title: data.title }} />
       <ScrollView>
-        {data.imageUrl ? <Hero source={{ uri: data.imageUrl }} contentFit="cover" /> : null}
+        {data.imageUrl ? (
+          <HeroWrap>
+            <Hero source={{ uri: data.imageUrl }} contentFit="cover" />
+            <LinearGradient
+              colors={['transparent', theme.colors.background]}
+              locations={[0, 1]}
+              style={styles.fade}
+              pointerEvents="none"
+            />
+          </HeroWrap>
+        ) : null}
         <Content>
           {data.kicker ? <Kicker>{data.kicker}</Kicker> : null}
           <Title>{data.title}</Title>
           {data.subtitle ? <Subtitle>{data.subtitle}</Subtitle> : null}
-          {data.description ? <Description>{data.description}</Description> : null}
+          {data.description ? (
+            category === 'films' ? (
+              <Crawl>
+                {crawlParagraphs(data.description).map((paragraph, index) => (
+                  <CrawlParagraph key={index}>{paragraph}</CrawlParagraph>
+                ))}
+              </Crawl>
+            ) : (
+              <Description>{data.description}</Description>
+            )
+          ) : null}
           <StatsGrid groups={data.stats} />
           {data.related.map((group) => (
             <RelatedSection key={`${group.category}-${group.title}`} group={group} />
@@ -97,3 +139,13 @@ export function CategoryDetailScreen({ category, id }: CategoryDetailScreenProps
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  fade: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '50%',
+  },
+});

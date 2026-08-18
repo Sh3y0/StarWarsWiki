@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 import type { CatalogListItem } from '../../types/catalog';
@@ -10,6 +11,10 @@ const CardContainer = styled.View`
   overflow: hidden;
   border-width: 1px;
   border-color: ${({ theme }) => theme.colors.border};
+`;
+
+const ImageWrap = styled.View`
+  width: 100%;
 `;
 
 const Body = styled.View`
@@ -78,14 +83,22 @@ export function CatalogCard({ item, imageAspect, wide, onPress }: CatalogCardPro
       style={styles.pressable}
     >
       <CardContainer>
-        <Image
-          source={item.imageUrl ? { uri: item.imageUrl } : undefined}
-          contentFit="cover"
-          style={[
-            styles.image,
-            { aspectRatio: imageAspect, backgroundColor: theme.colors.surfaceAlt },
-          ]}
-        />
+        <ImageWrap>
+          <Image
+            source={item.imageUrl ? { uri: item.imageUrl } : undefined}
+            contentFit="cover"
+            style={[
+              styles.image,
+              { aspectRatio: imageAspect, backgroundColor: theme.colors.surfaceAlt },
+            ]}
+          />
+          <LinearGradient
+            colors={['transparent', theme.colors.surface]}
+            locations={[0, 1]}
+            style={styles.fade}
+            pointerEvents="none"
+          />
+        </ImageWrap>
         <Body>
           {item.subtitle ? <Subtitle numberOfLines={1}>{item.subtitle}</Subtitle> : null}
           <Title numberOfLines={wide ? 2 : 1}>{item.title}</Title>
@@ -108,5 +121,12 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
+  },
+  fade: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '50%',
   },
 });

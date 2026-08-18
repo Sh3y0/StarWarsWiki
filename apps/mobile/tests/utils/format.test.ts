@@ -1,5 +1,11 @@
 import { characterToListItem, filmToDetail, planetToListItem } from '@/api/mappers';
-import { displayValue, episodeLabel, formatHeight, yearFromDate } from '@/utils/format';
+import {
+  crawlParagraphs,
+  displayValue,
+  episodeLabel,
+  formatHeight,
+  yearFromDate,
+} from '@/utils/format';
 import type { Character, Film, Planet } from '@/api/schemas';
 
 describe('format helpers', () => {
@@ -19,6 +25,17 @@ describe('format helpers', () => {
 
   it('extracts the year from a release date', () => {
     expect(yearFromDate('1977-05-25')).toBe('1977');
+  });
+
+  it('splits an opening crawl into paragraphs and collapses line breaks', () => {
+    expect(
+      crawlParagraphs(
+        'It is a period of civil war.\r\nRebel ships win.\r\n\r\nPursued by the Empire, Leia races home.',
+      ),
+    ).toEqual([
+      'It is a period of civil war. Rebel ships win.',
+      'Pursued by the Empire, Leia races home.',
+    ]);
   });
 });
 
