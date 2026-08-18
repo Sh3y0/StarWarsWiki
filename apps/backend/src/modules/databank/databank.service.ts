@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fetchAllItems } from './databank.scraper';
-import type { DatabankCategory, DatabankFile, SyncResult } from './databank.types';
+import type { DatabankCategory, DatabankFile, DatabankItem, SyncResult } from './databank.types';
 
 const DATA_DIR = path.resolve(__dirname, '../../../data');
 
@@ -51,6 +51,11 @@ export async function getItems(category: DatabankCategory, options: GetItemsOpti
   const limit = options.limit ?? items.length;
 
   return items.slice(offset, offset + limit);
+}
+
+export async function getAllItems(category: DatabankCategory): Promise<DatabankItem[]> {
+  const file = await readDatabankFile(category);
+  return file.items;
 }
 
 export async function syncCategory(category: DatabankCategory): Promise<SyncResult> {

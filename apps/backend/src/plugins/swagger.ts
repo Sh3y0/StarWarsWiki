@@ -12,7 +12,10 @@ export async function registerSwagger(app: FastifyInstance) {
           'API to sync and serve information from the official StarWars.com Databank (characters, creatures, droids, locations, species, vehicles).',
         version: '0.1.0',
       },
-      tags: [{ name: 'databank', description: 'StarWars.com Databank endpoints' }],
+      tags: [
+        { name: 'databank', description: 'StarWars.com Databank endpoints' },
+        { name: 'swapi', description: 'SWAPI (swapi.dev) endpoints, enriched with Databank data' },
+      ],
     },
     transform: jsonSchemaTransform,
   });

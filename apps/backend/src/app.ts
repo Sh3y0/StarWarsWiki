@@ -7,6 +7,7 @@ import {
 import { env } from './config/env';
 import { registerSwagger } from './plugins/swagger';
 import { databankRoutes } from './modules/databank/databank.routes';
+import { swapiRoutes } from './modules/swapi/swapi.routes';
 
 export async function buildApp() {
   const app = Fastify({
@@ -24,6 +25,7 @@ export async function buildApp() {
 
   await registerSwagger(app);
   await app.register(databankRoutes);
+  await app.register(swapiRoutes);
 
   app.get('/health', async () => ({ status: 'ok' }));
 

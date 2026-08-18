@@ -54,6 +54,15 @@ For each category (`characters`, `creatures`, `droids`, `locations`, `species`, 
   - `?slug=` — fetch a single item by slug
 - **`POST /api/{category}/sync`** — syncs against StarWars.com, overwrites `data/{category}.json`, and returns `{ category, totalFetched, updatedAt, filePath }`.
 
+### SWAPI
+
+- **`GET /api/swapi/people`** — proxies [SWAPI](https://swapi.dev/api/people)'s people list.
+  - `?page=` — paginate the full list (defaults to page 1).
+  - `?search=` — search globally across all of SWAPI; `?page=` is ignored when searching, since the search itself isn't paginated by us.
+  - Each result is enriched with the matching Databank `characters` item — joined by checking whether `person.name` (lowercased) is contained in the stored `characters.json` `title` (lowercased) — under a `databank` field, or `null` when no match is found.
+  - The raw SWAPI `url` field is replaced with `character_id`, the numeric id parsed from that url (e.g. `"https://swapi.dev/api/people/4/"` → `"4"`), for use with the detail endpoint below.
+- **`GET /api/swapi/people/:id`** — fetches a single person from SWAPI by `character_id` (e.g. `/api/swapi/people/4`) and enriches it the same way. Returns `404` if SWAPI has no person with that id.
+
 ## Running a sync from Swagger
 
 1. Start the server (`npm run backend:dev`).
