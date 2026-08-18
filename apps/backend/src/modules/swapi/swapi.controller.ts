@@ -3,6 +3,8 @@ import type { z } from 'zod';
 import {
   getCharacterById,
   getCharacters,
+  getFilmById,
+  getFilms,
   getPlanetById,
   getPlanets,
   getStarshipById,
@@ -176,6 +178,48 @@ export async function getPlanetByIdHandler(
     return reply.send(planet);
   } catch (error) {
     request.log.error(error, `Failed to fetch planet "${id}" from SWAPI`);
+    return reply.status(502).send({
+      error: 'SWAPI_FETCH_FAILED',
+      message: error instanceof Error ? error.message : 'Unknown error fetching from SWAPI',
+    });
+  }
+}
+
+export async function getFilmsHandler(
+  request: FastifyRequest<{ Querystring: SwapiListQuery }>,
+  reply: FastifyReply,
+) {
+  try {
+    const result = await getFilms(request.query);
+    return reply.send(result);
+  } catch (error) {
+    request.log.error(error, 'Failed to fetch films from SWAPI');
+    return reply.status(502).send({
+      error: 'SWAPI_FETCH_FAILED',
+      message: error instanceof Error ? error.message : 'Unknown error fetching from SWAPI',
+    });
+  }
+}
+
+export async function getFilmByIdHandler(
+  request: FastifyRequest<{ Params: NumericIdParam }>,
+  reply: FastifyReply,
+) {
+  const { id } = request.params;
+
+  try {
+    const film = await getFilmById(id);
+
+    if (!film) {
+      return reply.status(404).send({
+        error: 'FILM_NOT_FOUND',
+        message: `No film found in SWAPI for id "${id}"`,
+      });
+    }
+
+    return reply.send(film);
+  } catch (error) {
+    request.log.error(error, `Failed to fetch film "${id}" from SWAPI`);
     return reply.status(502).send({
       error: 'SWAPI_FETCH_FAILED',
       message: error instanceof Error ? error.message : 'Unknown error fetching from SWAPI',

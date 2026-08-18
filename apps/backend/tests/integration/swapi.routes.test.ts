@@ -82,6 +82,24 @@ const tatooine = {
   databank: null,
 };
 
+const aNewHope = {
+  film_id: '1',
+  title: 'A New Hope',
+  episode_id: 4,
+  opening_crawl: 'It is a period of civil war...',
+  director: 'George Lucas',
+  producer: 'Gary Kurtz, Rick McCallum',
+  release_date: '1977-05-25',
+  characters: ['1', '2'],
+  planets: ['1'],
+  starships: ['2'],
+  vehicles: ['4'],
+  species: ['https://swapi.dev/api/species/1/'],
+  created: '2014-12-10T14:23:31.880000Z',
+  edited: '2014-12-20T19:49:45.256000Z',
+  image: '/static/films/4.jpg',
+};
+
 describe('swapi routes', () => {
   let app: FastifyInstance;
 
@@ -380,6 +398,93 @@ describe('swapi routes', () => {
       const response = await app.inject({ method: 'GET', url: '/api/swapi/planets/abc' });
 
       expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe('GET /api/swapi/films', () => {
+    it('returns films with film_id instead of url', async () => {
+      jest.spyOn(service, 'getFilms').mockResolvedValue({
+        count: 1,
+        currentPage: 1,
+        nextPage: null,
+        previousPage: null,
+        results: [aNewHope],
+      });
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/films' });
+
+      expect(response.statusCode).toBe(200);
+      const body = response.json();
+      expect(body).toMatchObject({
+        count: 1,
+        results: [{ title: 'A New Hope', film_id: '1', image: '/static/films/4.jpg' }],
+      });
+      expect(body.results[0]).not.toHaveProperty('url');
+    });
+
+    it('returns 502 when SWAPI is unreachable', async () => {
+      jest.spyOn(service, 'getFilms').mockRejectedValue(new Error('SWAPI unreachable'));
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/films' });
+
+      expect(response.statusCode).toBe(502);
+      expect(response.json()).toMatchObject({ error: 'SWAPI_FETCH_FAILED' });
+    });
+
+    it('rejects an invalid page query param', async () => {
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/films?page=abc' });
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe('GET /api/swapi/films/:id', () => {
+    it('returns the film', async () => {
+      jest.spyOn(service, 'getFilmById').mockResolvedValue(aNewHope);
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/films/1' });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toMatchObject({ title: 'A New Hope', film_id: '1' });
+    });
+
+    it('returns 404 when the film does not exist', async () => {
+      jest.spyOn(service, 'getFilmById').mockResolvedValue(null);
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/films/99999' });
+
+      expect(response.statusCode).toBe(404);
+      expect(response.json()).toMatchObject({ error: 'FILM_NOT_FOUND' });
+    });
+
+    it('returns 502 when SWAPI is unreachable', async () => {
+      jest.spyOn(service, 'getFilmById').mockRejectedValue(new Error('SWAPI unreachable'));
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/films/1' });
+
+      expect(response.statusCode).toBe(502);
+      expect(response.json()).toMatchObject({ error: 'SWAPI_FETCH_FAILED' });
+    });
+
+    it('rejects a non-numeric id', async () => {
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/films/abc' });
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe('GET /static/films/:file', () => {
+    it('serves the poster image files', async () => {
+      const response = await app.inject({ method: 'GET', url: '/static/films/4.jpg' });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.headers['content-type']).toContain('image/jpeg');
+    });
+
+    it('returns 404 for a non-existent poster', async () => {
+      const response = await app.inject({ method: 'GET', url: '/static/films/99.jpg' });
+
+      expect(response.statusCode).toBe(404);
     });
   });
 });

@@ -1,6 +1,8 @@
 import { getAllItems } from '../databank/databank.service';
 import type { DatabankItem } from '../databank/databank.types';
 import {
+  fetchFilm,
+  fetchFilms,
   fetchPeople,
   fetchPerson,
   fetchPlanet,
@@ -10,12 +12,15 @@ import {
   fetchVehicle,
   fetchVehicles,
 } from './swapi.client';
+import { FILM_IMAGES } from './swapi.constants';
 import { findBestMatch } from './swapi.matching';
 import type {
   EnrichedCharacter,
+  EnrichedFilm,
   EnrichedPlanet,
   EnrichedStarship,
   EnrichedVehicle,
+  SwapiFilm,
   SwapiPerson,
   SwapiPlanet,
   SwapiStarship,
@@ -55,11 +60,12 @@ function extractIds(urls: string[]): string[] {
 }
 
 function enrichPerson(person: SwapiPerson, items: DatabankItem[]): EnrichedCharacter {
-  const { url, homeworld, starships, vehicles, ...rest } = person;
+  const { url, homeworld, films, starships, vehicles, ...rest } = person;
   return {
     ...rest,
     character_id: extractIdFromUrl(url),
     homeworld: extractIdFromUrl(homeworld),
+    films: extractIds(films),
     starships: extractIds(starships),
     vehicles: extractIds(vehicles),
     databank: findDatabankMatch(person.name, items),
@@ -67,32 +73,51 @@ function enrichPerson(person: SwapiPerson, items: DatabankItem[]): EnrichedChara
 }
 
 function enrichStarship(starship: SwapiStarship, items: DatabankItem[]): EnrichedStarship {
-  const { url, pilots, ...rest } = starship;
+  const { url, films, pilots, ...rest } = starship;
   return {
     ...rest,
     starship_id: extractIdFromUrl(url),
+    films: extractIds(films),
     pilots: extractIds(pilots),
     databank: findDatabankMatchByNameOrModel(starship, items),
   };
 }
 
 function enrichVehicle(vehicle: SwapiVehicle, items: DatabankItem[]): EnrichedVehicle {
-  const { url, pilots, ...rest } = vehicle;
+  const { url, films, pilots, ...rest } = vehicle;
   return {
     ...rest,
     vehicle_id: extractIdFromUrl(url),
+    films: extractIds(films),
     pilots: extractIds(pilots),
     databank: findDatabankMatchByNameOrModel(vehicle, items),
   };
 }
 
 function enrichPlanet(planet: SwapiPlanet, items: DatabankItem[]): EnrichedPlanet {
-  const { url, residents, ...rest } = planet;
+  const { url, films, residents, ...rest } = planet;
   return {
     ...rest,
     planet_id: extractIdFromUrl(url),
+    films: extractIds(films),
     residents: extractIds(residents),
     databank: findDatabankMatch(planet.name, items),
+  };
+}
+
+// Films have no matching Databank category, so there's no name/title matching here — just the
+// SWAPI data with its reference arrays reduced to ids, plus a locally-served poster image.
+// `species` is intentionally left untouched: there's no /api/swapi/species endpoint to link to.
+function enrichFilm(film: SwapiFilm): EnrichedFilm {
+  const { url, characters, planets, starships, vehicles, ...rest } = film;
+  return {
+    ...rest,
+    film_id: extractIdFromUrl(url),
+    characters: extractIds(characters),
+    planets: extractIds(planets),
+    starships: extractIds(starships),
+    vehicles: extractIds(vehicles),
+    image: FILM_IMAGES[film.episode_id] ?? null,
   };
 }
 
@@ -214,4 +239,32 @@ export async function getPlanetById(id: string): Promise<EnrichedPlanet | null> 
   }
 
   return enrichPlanet(planet, databankItems);
+}
+
+export async function getFilms(
+  options: GetSwapiListOptions = {},
+): Promise<GetSwapiListResult<EnrichedFilm>> {
+  const isSearch = Boolean(options.search);
+
+  const swapiResponse = isSearch
+    ? await fetchFilms({ search: options.search })
+    : await fetchFilms({ page: options.page ?? 1 });
+
+  return {
+    count: swapiResponse.count,
+    currentPage: isSearch ? null : (options.page ?? 1),
+    nextPage: extractPageNumber(swapiResponse.next),
+    previousPage: extractPageNumber(swapiResponse.previous),
+    results: swapiResponse.results.map((film) => enrichFilm(film)),
+  };
+}
+
+export async function getFilmById(id: string): Promise<EnrichedFilm | null> {
+  const film = await fetchFilm(id);
+
+  if (!film) {
+    return null;
+  }
+
+  return enrichFilm(film);
 }

@@ -1,6 +1,8 @@
 import {
   getCharacterById,
   getCharacters,
+  getFilmById,
+  getFilms,
   getPlanetById,
   getPlanets,
   getStarshipById,
@@ -9,6 +11,8 @@ import {
   getVehicles,
 } from '../../src/modules/swapi/swapi.service';
 import {
+  fetchFilm,
+  fetchFilms,
   fetchPeople,
   fetchPerson,
   fetchPlanet,
@@ -29,6 +33,8 @@ jest.mock('../../src/modules/swapi/swapi.client', () => ({
   fetchVehicle: jest.fn(),
   fetchPlanets: jest.fn(),
   fetchPlanet: jest.fn(),
+  fetchFilms: jest.fn(),
+  fetchFilm: jest.fn(),
 }));
 
 jest.mock('../../src/modules/databank/databank.service', () => ({
@@ -43,6 +49,8 @@ const mockedFetchVehicles = fetchVehicles as jest.Mock;
 const mockedFetchVehicle = fetchVehicle as jest.Mock;
 const mockedFetchPlanets = fetchPlanets as jest.Mock;
 const mockedFetchPlanet = fetchPlanet as jest.Mock;
+const mockedFetchFilms = fetchFilms as jest.Mock;
+const mockedFetchFilm = fetchFilm as jest.Mock;
 const mockedGetAllItems = getAllItems as jest.Mock;
 
 describe('swapi.service', () => {
@@ -56,6 +64,7 @@ describe('swapi.service', () => {
           {
             name: 'Luke Skywalker',
             url: 'https://swapi.dev/api/people/1/',
+            films: [],
             homeworld: 'https://swapi.dev/api/planets/1/',
             starships: [],
             vehicles: [],
@@ -63,6 +72,7 @@ describe('swapi.service', () => {
           {
             name: 'Unknown Guy',
             url: 'https://swapi.dev/api/people/99/',
+            films: [],
             homeworld: 'https://swapi.dev/api/planets/1/',
             starships: [],
             vehicles: [],
@@ -97,6 +107,7 @@ describe('swapi.service', () => {
           {
             name: 'Luke Skywalker',
             url: 'https://swapi.dev/api/people/1/',
+            films: [],
             homeworld: 'https://swapi.dev/api/planets/1/',
             starships: [],
             vehicles: [],
@@ -111,7 +122,7 @@ describe('swapi.service', () => {
       expect(result.results[0]).not.toHaveProperty('url');
     });
 
-    it('replaces the starships and vehicles arrays of urls with arrays of ids', async () => {
+    it('replaces the films, starships, and vehicles arrays of urls with arrays of ids', async () => {
       mockedFetchPeople.mockResolvedValue({
         count: 1,
         next: null,
@@ -120,6 +131,7 @@ describe('swapi.service', () => {
           {
             name: 'Luke Skywalker',
             url: 'https://swapi.dev/api/people/1/',
+            films: ['https://swapi.dev/api/films/1/', 'https://swapi.dev/api/films/2/'],
             homeworld: 'https://swapi.dev/api/planets/1/',
             starships: [
               'https://swapi.dev/api/starships/12/',
@@ -133,6 +145,7 @@ describe('swapi.service', () => {
 
       const result = await getCharacters();
 
+      expect(result.results[0]?.films).toEqual(['1', '2']);
       expect(result.results[0]?.starships).toEqual(['12', '22']);
       expect(result.results[0]?.vehicles).toEqual(['14', '30']);
     });
@@ -146,6 +159,7 @@ describe('swapi.service', () => {
           {
             name: 'Luke Skywalker',
             url: 'https://swapi.dev/api/people/1/',
+            films: [],
             homeworld: 'https://swapi.dev/api/planets/1/',
             starships: [],
             vehicles: [],
@@ -168,6 +182,7 @@ describe('swapi.service', () => {
           {
             name: 'C-3PO',
             url: 'https://swapi.dev/api/people/2/',
+            films: [],
             homeworld: 'https://swapi.dev/api/planets/1/',
             starships: [],
             vehicles: [],
@@ -201,6 +216,7 @@ describe('swapi.service', () => {
       mockedFetchPerson.mockResolvedValue({
         name: 'Darth Vader',
         url: 'https://swapi.dev/api/people/4/',
+        films: [],
         homeworld: 'https://swapi.dev/api/planets/1/',
         starships: ['https://swapi.dev/api/starships/13/'],
         vehicles: [],
@@ -236,6 +252,7 @@ describe('swapi.service', () => {
           {
             name: 'Millennium Falcon',
             url: 'https://swapi.dev/api/starships/10/',
+            films: [],
             pilots: [],
           },
         ],
@@ -262,6 +279,7 @@ describe('swapi.service', () => {
             name: 'Millennium Falcon',
             model: 'YT-1300 light freighter',
             url: 'https://swapi.dev/api/starships/10/',
+            films: [],
             pilots: ['https://swapi.dev/api/people/13/', 'https://swapi.dev/api/people/14/'],
           },
         ],
@@ -279,7 +297,12 @@ describe('swapi.service', () => {
         next: null,
         previous: null,
         results: [
-          { name: 'Calamari Cruiser', url: 'https://swapi.dev/api/starships/27/', pilots: [] },
+          {
+            name: 'Calamari Cruiser',
+            url: 'https://swapi.dev/api/starships/27/',
+            films: [],
+            pilots: [],
+          },
         ],
       });
       mockedGetAllItems.mockResolvedValue([
@@ -318,6 +341,7 @@ describe('swapi.service', () => {
             name: 'Rebel transport',
             model: 'GR-75 medium transport',
             url: 'https://swapi.dev/api/starships/17/',
+            films: [],
             pilots: [],
           },
         ],
@@ -341,6 +365,7 @@ describe('swapi.service', () => {
             name: 'Millennium Falcon',
             model: 'YT-1300 light freighter',
             url: 'https://swapi.dev/api/starships/10/',
+            films: [],
             pilots: [],
           },
         ],
@@ -361,6 +386,7 @@ describe('swapi.service', () => {
       mockedFetchStarship.mockResolvedValue({
         name: 'Millennium Falcon',
         url: 'https://swapi.dev/api/starships/10/',
+        films: [],
         pilots: ['https://swapi.dev/api/people/13/'],
       });
       mockedGetAllItems.mockResolvedValue([
@@ -397,6 +423,7 @@ describe('swapi.service', () => {
             name: 'Sand Crawler',
             model: 'Digger Crawler',
             url: 'https://swapi.dev/api/vehicles/4/',
+            films: [],
             pilots: [],
           },
         ],
@@ -423,6 +450,7 @@ describe('swapi.service', () => {
             name: 'Snowspeeder',
             model: 't-47 airspeeder',
             url: 'https://swapi.dev/api/vehicles/14/',
+            films: [],
             pilots: ['https://swapi.dev/api/people/1/', 'https://swapi.dev/api/people/18/'],
           },
         ],
@@ -444,6 +472,7 @@ describe('swapi.service', () => {
             name: 'Rebel transport',
             model: 'GR-75 medium transport',
             url: 'https://swapi.dev/api/vehicles/17/',
+            films: [],
             pilots: [],
           },
         ],
@@ -480,6 +509,7 @@ describe('swapi.service', () => {
         name: 'Sand Crawler',
         model: 'Digger Crawler',
         url: 'https://swapi.dev/api/vehicles/4/',
+        films: [],
         pilots: ['https://swapi.dev/api/people/5/'],
       });
       mockedGetAllItems.mockResolvedValue([
@@ -515,6 +545,7 @@ describe('swapi.service', () => {
           {
             name: 'Tatooine',
             url: 'https://swapi.dev/api/planets/1/',
+            films: [],
             residents: [],
           },
         ],
@@ -538,6 +569,7 @@ describe('swapi.service', () => {
           {
             name: 'Tatooine',
             url: 'https://swapi.dev/api/planets/1/',
+            films: [],
             residents: ['https://swapi.dev/api/people/1/', 'https://swapi.dev/api/people/2/'],
           },
         ],
@@ -554,7 +586,14 @@ describe('swapi.service', () => {
         count: 1,
         next: null,
         previous: null,
-        results: [{ name: 'Yavin IV', url: 'https://swapi.dev/api/planets/3/', residents: [] }],
+        results: [
+          {
+            name: 'Yavin IV',
+            url: 'https://swapi.dev/api/planets/3/',
+            films: [],
+            residents: [],
+          },
+        ],
       });
       mockedGetAllItems.mockResolvedValue([{ id: '1', slug: 'yavin-4', title: 'Yavin 4' }]);
 
@@ -585,6 +624,7 @@ describe('swapi.service', () => {
       mockedFetchPlanet.mockResolvedValue({
         name: 'Tatooine',
         url: 'https://swapi.dev/api/planets/1/',
+        films: [],
         residents: ['https://swapi.dev/api/people/1/'],
       });
       mockedGetAllItems.mockResolvedValue([{ id: '1', slug: 'tatooine', title: 'Tatooine' }]);
@@ -603,6 +643,131 @@ describe('swapi.service', () => {
       mockedGetAllItems.mockResolvedValue([]);
 
       const result = await getPlanetById('99999');
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getFilms', () => {
+    it('replaces url with film_id and reduces reference arrays to ids, leaving species untouched', async () => {
+      mockedFetchFilms.mockResolvedValue({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [
+          {
+            title: 'A New Hope',
+            episode_id: 4,
+            url: 'https://swapi.dev/api/films/1/',
+            characters: ['https://swapi.dev/api/people/1/', 'https://swapi.dev/api/people/2/'],
+            planets: ['https://swapi.dev/api/planets/1/'],
+            starships: ['https://swapi.dev/api/starships/2/'],
+            vehicles: ['https://swapi.dev/api/vehicles/4/'],
+            species: ['https://swapi.dev/api/species/1/', 'https://swapi.dev/api/species/2/'],
+          },
+        ],
+      });
+
+      const result = await getFilms();
+
+      const film = result.results[0];
+      expect(film).not.toHaveProperty('url');
+      expect(film?.film_id).toBe('1');
+      expect(film?.characters).toEqual(['1', '2']);
+      expect(film?.planets).toEqual(['1']);
+      expect(film?.starships).toEqual(['2']);
+      expect(film?.vehicles).toEqual(['4']);
+      // species is intentionally left as raw urls: there's no /api/swapi/species endpoint.
+      expect(film?.species).toEqual([
+        'https://swapi.dev/api/species/1/',
+        'https://swapi.dev/api/species/2/',
+      ]);
+    });
+
+    it('attaches the locally-served poster image, keyed by episode_id', async () => {
+      mockedFetchFilms.mockResolvedValue({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [
+          {
+            title: 'A New Hope',
+            episode_id: 4,
+            url: 'https://swapi.dev/api/films/1/',
+            characters: [],
+            planets: [],
+            starships: [],
+            vehicles: [],
+            species: [],
+          },
+        ],
+      });
+
+      const result = await getFilms();
+
+      expect(result.results[0]?.image).toBe('/static/films/4.jpg');
+    });
+
+    it('returns null for image when the episode has no mapped poster', async () => {
+      mockedFetchFilms.mockResolvedValue({
+        count: 1,
+        next: null,
+        previous: null,
+        results: [
+          {
+            title: 'Unknown Episode',
+            episode_id: 99,
+            url: 'https://swapi.dev/api/films/7/',
+            characters: [],
+            planets: [],
+            starships: [],
+            vehicles: [],
+            species: [],
+          },
+        ],
+      });
+
+      const result = await getFilms();
+
+      expect(result.results[0]?.image).toBeNull();
+    });
+
+    it('does not forward page to the SWAPI client when searching', async () => {
+      mockedFetchFilms.mockResolvedValue({ count: 0, next: null, previous: null, results: [] });
+
+      const result = await getFilms({ page: 2, search: 'hope' });
+
+      expect(mockedFetchFilms).toHaveBeenCalledWith({ search: 'hope' });
+      expect(mockedFetchFilms).not.toHaveBeenCalledWith(expect.objectContaining({ page: 2 }));
+      expect(result.currentPage).toBeNull();
+    });
+  });
+
+  describe('getFilmById', () => {
+    it('fetches a film by id and enriches it with the poster image', async () => {
+      mockedFetchFilm.mockResolvedValue({
+        title: 'The Phantom Menace',
+        episode_id: 1,
+        url: 'https://swapi.dev/api/films/4/',
+        characters: [],
+        planets: [],
+        starships: [],
+        vehicles: [],
+        species: [],
+      });
+
+      const result = await getFilmById('4');
+
+      expect(mockedFetchFilm).toHaveBeenCalledWith('4');
+      expect(result?.film_id).toBe('4');
+      expect(result).not.toHaveProperty('url');
+      expect(result?.image).toBe('/static/films/1.png');
+    });
+
+    it('returns null when SWAPI has no matching film', async () => {
+      mockedFetchFilm.mockResolvedValue(null);
+
+      const result = await getFilmById('99999');
 
       expect(result).toBeNull();
     });

@@ -1,5 +1,7 @@
 import { env } from '../../config/env';
 import type {
+  SwapiFilm,
+  SwapiFilmsResponse,
   SwapiPeopleResponse,
   SwapiPerson,
   SwapiPlanet,
@@ -91,4 +93,12 @@ export async function fetchPlanets(options: FetchListOptions = {}): Promise<Swap
 
 export async function fetchPlanet(id: string): Promise<SwapiPlanet | null> {
   return fetchOne<SwapiPlanet>('planets', id);
+}
+
+export async function fetchFilms(options: FetchListOptions = {}): Promise<SwapiFilmsResponse> {
+  return fetchList<SwapiFilmsResponse>('films', options);
+}
+
+export async function fetchFilm(id: string): Promise<SwapiFilm | null> {
+  return fetchOne<SwapiFilm>('films', id);
 }

@@ -10,6 +10,7 @@ export const getCharactersQuerySchema = swapiListQuerySchema;
 export const getStarshipsQuerySchema = swapiListQuerySchema;
 export const getVehiclesQuerySchema = swapiListQuerySchema;
 export const getPlanetsQuerySchema = swapiListQuerySchema;
+export const getFilmsQuerySchema = swapiListQuerySchema;
 
 export const numericIdParamSchema = z.object({
   id: z.string().regex(/^\d+$/, 'id must be numeric'),
@@ -19,6 +20,7 @@ export const characterIdParamSchema = numericIdParamSchema;
 export const starshipIdParamSchema = numericIdParamSchema;
 export const vehicleIdParamSchema = numericIdParamSchema;
 export const planetIdParamSchema = numericIdParamSchema;
+export const filmIdParamSchema = numericIdParamSchema;
 
 export const enrichedCharacterSchema = z
   .object({
@@ -147,3 +149,33 @@ export const getPlanetsResponseSchema = z.object({
 });
 
 export const getPlanetResponseSchema = enrichedPlanetSchema;
+
+export const enrichedFilmSchema = z
+  .object({
+    film_id: z.string(),
+    title: z.string(),
+    episode_id: z.number(),
+    opening_crawl: z.string(),
+    director: z.string(),
+    producer: z.string(),
+    release_date: z.string(),
+    characters: z.array(z.string()),
+    planets: z.array(z.string()),
+    starships: z.array(z.string()),
+    vehicles: z.array(z.string()),
+    species: z.array(z.string()),
+    created: z.string(),
+    edited: z.string(),
+    image: z.string().nullable(),
+  })
+  .passthrough();
+
+export const getFilmsResponseSchema = z.object({
+  count: z.number(),
+  currentPage: z.number().nullable(),
+  nextPage: z.number().nullable(),
+  previousPage: z.number().nullable(),
+  results: z.array(enrichedFilmSchema),
+});
+
+export const getFilmResponseSchema = enrichedFilmSchema;

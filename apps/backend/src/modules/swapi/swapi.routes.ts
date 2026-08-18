@@ -4,6 +4,8 @@ import { errorResponseSchema } from '../databank/databank.schemas';
 import {
   getCharacterByIdHandler,
   getCharactersHandler,
+  getFilmByIdHandler,
+  getFilmsHandler,
   getPlanetByIdHandler,
   getPlanetsHandler,
   getStarshipByIdHandler,
@@ -13,9 +15,13 @@ import {
 } from './swapi.controller';
 import {
   characterIdParamSchema,
+  filmIdParamSchema,
   getCharacterResponseSchema,
   getCharactersQuerySchema,
   getCharactersResponseSchema,
+  getFilmResponseSchema,
+  getFilmsQuerySchema,
+  getFilmsResponseSchema,
   getPlanetResponseSchema,
   getPlanetsQuerySchema,
   getPlanetsResponseSchema,
@@ -40,7 +46,7 @@ export async function swapiRoutes(fastify: FastifyInstance) {
         tags: ['swapi'],
         summary: 'Get characters from SWAPI, enriched with Databank data',
         description:
-          'Proxies the SWAPI /people endpoint and enriches each result with the matching Databank character from characters.json. Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=, since the search itself is global). Each result exposes character_id (the numeric id from the SWAPI url) instead of the raw url. The starships and vehicles arrays are likewise reduced to numeric ids (for use with GET /api/swapi/starships/:id and GET /api/swapi/vehicles/:id), and homeworld is reduced to a numeric id (for use with GET /api/swapi/planets/:id).',
+          'Proxies the SWAPI /people endpoint and enriches each result with the matching Databank character from characters.json. Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=, since the search itself is global). Each result exposes character_id (the numeric id from the SWAPI url) instead of the raw url. The starships, vehicles, and films arrays are likewise reduced to numeric ids (for use with GET /api/swapi/starships/:id, GET /api/swapi/vehicles/:id, and GET /api/swapi/films/:id), and homeworld is reduced to a numeric id (for use with GET /api/swapi/planets/:id).',
         querystring: getCharactersQuerySchema,
         response: {
           200: getCharactersResponseSchema,
@@ -77,7 +83,7 @@ export async function swapiRoutes(fastify: FastifyInstance) {
         tags: ['swapi'],
         summary: 'Get starships from SWAPI, enriched with Databank data',
         description:
-          'Proxies the SWAPI /starships endpoint and enriches each result with the matching Databank item from vehicles.json. Matching tries the SWAPI name first, falling back to model when the name has no confident match (e.g. "Rebel transport" -> "GR-75 Medium Transport"), handling naming drift via exact/substring/token-overlap matching and returning null when no tier is confident enough. Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=). Each result exposes starship_id instead of the raw url, and pilots as an array of numeric character ids (for use with GET /api/swapi/people/:id) instead of urls.',
+          'Proxies the SWAPI /starships endpoint and enriches each result with the matching Databank item from vehicles.json. Matching tries the SWAPI name first, falling back to model when the name has no confident match (e.g. "Rebel transport" -> "GR-75 Medium Transport"), handling naming drift via exact/substring/token-overlap matching and returning null when no tier is confident enough. Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=). Each result exposes starship_id instead of the raw url, pilots as an array of numeric character ids (for use with GET /api/swapi/people/:id), and films as an array of numeric film ids (for use with GET /api/swapi/films/:id) — all instead of urls.',
         querystring: getStarshipsQuerySchema,
         response: {
           200: getStarshipsResponseSchema,
@@ -114,7 +120,7 @@ export async function swapiRoutes(fastify: FastifyInstance) {
         tags: ['swapi'],
         summary: 'Get vehicles from SWAPI, enriched with Databank data',
         description:
-          'Proxies the SWAPI /vehicles endpoint and enriches each result with the matching Databank item from vehicles.json, using the same name-then-model matching as GET /api/swapi/starships. Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=). Each result exposes vehicle_id instead of the raw url, and pilots as an array of numeric character ids instead of urls.',
+          'Proxies the SWAPI /vehicles endpoint and enriches each result with the matching Databank item from vehicles.json, using the same name-then-model matching as GET /api/swapi/starships. Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=). Each result exposes vehicle_id instead of the raw url, pilots as an array of numeric character ids, and films as an array of numeric film ids — all instead of urls.',
         querystring: getVehiclesQuerySchema,
         response: {
           200: getVehiclesResponseSchema,
@@ -151,7 +157,7 @@ export async function swapiRoutes(fastify: FastifyInstance) {
         tags: ['swapi'],
         summary: 'Get planets from SWAPI, enriched with Databank data',
         description:
-          'Proxies the SWAPI /planets endpoint and enriches each result with the matching Databank item from locations.json, matched by name (handles naming drift such as "Yavin IV" vs "Yavin 4"). Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=). Each result exposes planet_id instead of the raw url, and residents as an array of numeric character ids (for use with GET /api/swapi/people/:id) instead of urls.',
+          'Proxies the SWAPI /planets endpoint and enriches each result with the matching Databank item from locations.json, matched by name (handles naming drift such as "Yavin IV" vs "Yavin 4"). Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=). Each result exposes planet_id instead of the raw url, residents as an array of numeric character ids (for use with GET /api/swapi/people/:id), and films as an array of numeric film ids (for use with GET /api/swapi/films/:id) — all instead of urls.',
         querystring: getPlanetsQuerySchema,
         response: {
           200: getPlanetsResponseSchema,
@@ -179,5 +185,42 @@ export async function swapiRoutes(fastify: FastifyInstance) {
       },
     },
     getPlanetByIdHandler,
+  );
+
+  app.get(
+    '/api/swapi/films',
+    {
+      schema: {
+        tags: ['swapi'],
+        summary: 'Get films from SWAPI, with a locally-hosted poster image',
+        description:
+          'Proxies the SWAPI /films endpoint. Films have no matching Databank category, so there is no databank field here; instead each result gets an image field (a locally-served poster path under /static/films/, or null if none is available for that episode). Use ?page= to paginate the full list, or ?search= to search globally across all of SWAPI (search ignores ?page=). Each result exposes film_id instead of the raw url, and the characters, planets, starships, and vehicles arrays are reduced to numeric ids (for use with the corresponding detail endpoints) instead of urls. The species array is left untouched, since there is no /api/swapi/species endpoint.',
+        querystring: getFilmsQuerySchema,
+        response: {
+          200: getFilmsResponseSchema,
+          502: errorResponseSchema,
+        },
+      },
+    },
+    getFilmsHandler,
+  );
+
+  app.get(
+    '/api/swapi/films/:id',
+    {
+      schema: {
+        tags: ['swapi'],
+        summary: 'Get a single film from SWAPI by id, with a locally-hosted poster image',
+        description:
+          'Fetches a single film from SWAPI (https://swapi.dev/api/films/{id}/) using the numeric film_id returned by GET /api/swapi/films (or a films id from any other SWAPI endpoint), and attaches the locally-served poster image for that episode.',
+        params: filmIdParamSchema,
+        response: {
+          200: getFilmResponseSchema,
+          404: errorResponseSchema,
+          502: errorResponseSchema,
+        },
+      },
+    },
+    getFilmByIdHandler,
   );
 }
