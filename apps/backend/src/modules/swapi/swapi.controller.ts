@@ -1,13 +1,13 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { z } from 'zod';
-import { getCharacterById, getCharacters } from './swapi.service';
-import type { characterIdParamSchema, getCharactersQuerySchema } from './swapi.schemas';
+import { getCharacterById, getCharacters, getStarshipById, getStarships } from './swapi.service';
+import type { numericIdParamSchema, swapiListQuerySchema } from './swapi.schemas';
 
-type GetCharactersQuery = z.infer<typeof getCharactersQuerySchema>;
-type CharacterIdParam = z.infer<typeof characterIdParamSchema>;
+type SwapiListQuery = z.infer<typeof swapiListQuerySchema>;
+type NumericIdParam = z.infer<typeof numericIdParamSchema>;
 
 export async function getCharactersHandler(
-  request: FastifyRequest<{ Querystring: GetCharactersQuery }>,
+  request: FastifyRequest<{ Querystring: SwapiListQuery }>,
   reply: FastifyReply,
 ) {
   try {
@@ -23,7 +23,7 @@ export async function getCharactersHandler(
 }
 
 export async function getCharacterByIdHandler(
-  request: FastifyRequest<{ Params: CharacterIdParam }>,
+  request: FastifyRequest<{ Params: NumericIdParam }>,
   reply: FastifyReply,
 ) {
   const { id } = request.params;
@@ -41,6 +41,48 @@ export async function getCharacterByIdHandler(
     return reply.send(character);
   } catch (error) {
     request.log.error(error, `Failed to fetch character "${id}" from SWAPI`);
+    return reply.status(502).send({
+      error: 'SWAPI_FETCH_FAILED',
+      message: error instanceof Error ? error.message : 'Unknown error fetching from SWAPI',
+    });
+  }
+}
+
+export async function getStarshipsHandler(
+  request: FastifyRequest<{ Querystring: SwapiListQuery }>,
+  reply: FastifyReply,
+) {
+  try {
+    const result = await getStarships(request.query);
+    return reply.send(result);
+  } catch (error) {
+    request.log.error(error, 'Failed to fetch starships from SWAPI');
+    return reply.status(502).send({
+      error: 'SWAPI_FETCH_FAILED',
+      message: error instanceof Error ? error.message : 'Unknown error fetching from SWAPI',
+    });
+  }
+}
+
+export async function getStarshipByIdHandler(
+  request: FastifyRequest<{ Params: NumericIdParam }>,
+  reply: FastifyReply,
+) {
+  const { id } = request.params;
+
+  try {
+    const starship = await getStarshipById(id);
+
+    if (!starship) {
+      return reply.status(404).send({
+        error: 'STARSHIP_NOT_FOUND',
+        message: `No starship found in SWAPI for id "${id}"`,
+      });
+    }
+
+    return reply.send(starship);
+  } catch (error) {
+    request.log.error(error, `Failed to fetch starship "${id}" from SWAPI`);
     return reply.status(502).send({
       error: 'SWAPI_FETCH_FAILED',
       message: error instanceof Error ? error.message : 'Unknown error fetching from SWAPI',

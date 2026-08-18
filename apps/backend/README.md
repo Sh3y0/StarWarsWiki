@@ -61,7 +61,12 @@ For each category (`characters`, `creatures`, `droids`, `locations`, `species`, 
   - `?search=` — search globally across all of SWAPI; `?page=` is ignored when searching, since the search itself isn't paginated by us.
   - Each result is enriched with the matching Databank `characters` item — joined by checking whether `person.name` (lowercased) is contained in the stored `characters.json` `title` (lowercased) — under a `databank` field, or `null` when no match is found.
   - The raw SWAPI `url` field is replaced with `character_id`, the numeric id parsed from that url (e.g. `"https://swapi.dev/api/people/4/"` → `"4"`), for use with the detail endpoint below.
+  - The `starships` array (SWAPI urls, e.g. `["https://swapi.dev/api/starships/12/", ...]`) is replaced with just the numeric ids (`["12", ...]`), for use with `GET /api/swapi/starships/:id`. Other reference arrays (`films`, `species`, `vehicles`, `homeworld`) are left as-is.
 - **`GET /api/swapi/people/:id`** — fetches a single person from SWAPI by `character_id` (e.g. `/api/swapi/people/4`) and enriches it the same way. Returns `404` if SWAPI has no person with that id.
+- **`GET /api/swapi/starships`** / **`GET /api/swapi/starships/:id`** — same shape as the people endpoints above (`?page=`, `?search=`, `starship_id` instead of `url`), but proxying [SWAPI's starships](https://swapi.dev/api/starships) and enriching against the Databank `vehicles` category.
+  - SWAPI's starship `name` and the Databank `title` drift more than character names do (e.g. `"Calamari Cruiser"` vs `"Mon Calamari Star Cruiser"`, `"EF76 Nebulon-B escort frigate"` vs `"Nebulon-B Frigate"`). Matching (`src/modules/swapi/swapi.matching.ts`) handles this with three tiers, most confident first: exact match, one string fully containing the other, and token-overlap (all significant words of the shorter name/title found in the other). It returns `null` rather than guessing when no tier is confident enough (e.g. `"CR90 corvette"`, `"Droid control ship"` have no reliable match in the current data).
+  - When `name` doesn't resolve to anything, matching is retried against SWAPI's `model` field — this is what resolves `"Rebel transport"` (name) to `"GR-75 Medium Transport"` (Databank title), since the Databank entry is keyed off the model (`"GR-75 medium transport"`) rather than the in-universe nickname.
+  - The `pilots` array (SWAPI urls) is replaced with just the numeric character ids, for use with `GET /api/swapi/people/:id`. Other reference arrays (`films`) are left as-is.
 
 ## Running a sync from Swagger
 

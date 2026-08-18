@@ -22,6 +22,28 @@ const yoda = {
   databank: null,
 };
 
+const millenniumFalcon = {
+  starship_id: '10',
+  name: 'Millennium Falcon',
+  model: 'YT-1300 light freighter',
+  manufacturer: 'Corellian Engineering Corporation',
+  cost_in_credits: '100000',
+  length: '34.37',
+  max_atmosphering_speed: '1050',
+  crew: '4',
+  passengers: '6',
+  cargo_capacity: '100000',
+  consumables: '2 months',
+  hyperdrive_rating: '0.5',
+  MGLT: '75',
+  starship_class: 'Light freighter',
+  pilots: [],
+  films: [],
+  created: '2014-12-10T16:59:45.094000Z',
+  edited: '2014-12-20T21:23:49.880000Z',
+  databank: null,
+};
+
 describe('swapi routes', () => {
   let app: FastifyInstance;
 
@@ -102,6 +124,78 @@ describe('swapi routes', () => {
 
     it('rejects a non-numeric id', async () => {
       const response = await app.inject({ method: 'GET', url: '/api/swapi/people/abc' });
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe('GET /api/swapi/starships', () => {
+    it('returns enriched starships with starship_id instead of url', async () => {
+      jest.spyOn(service, 'getStarships').mockResolvedValue({
+        count: 1,
+        currentPage: 1,
+        nextPage: null,
+        previousPage: null,
+        results: [millenniumFalcon],
+      });
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/starships' });
+
+      expect(response.statusCode).toBe(200);
+      const body = response.json();
+      expect(body).toMatchObject({
+        count: 1,
+        results: [{ name: 'Millennium Falcon', starship_id: '10' }],
+      });
+      expect(body.results[0]).not.toHaveProperty('url');
+    });
+
+    it('returns 502 when SWAPI is unreachable', async () => {
+      jest.spyOn(service, 'getStarships').mockRejectedValue(new Error('SWAPI unreachable'));
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/starships' });
+
+      expect(response.statusCode).toBe(502);
+      expect(response.json()).toMatchObject({ error: 'SWAPI_FETCH_FAILED' });
+    });
+
+    it('rejects an invalid page query param', async () => {
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/starships?page=abc' });
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe('GET /api/swapi/starships/:id', () => {
+    it('returns the enriched starship', async () => {
+      jest.spyOn(service, 'getStarshipById').mockResolvedValue(millenniumFalcon);
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/starships/10' });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toMatchObject({ name: 'Millennium Falcon', starship_id: '10' });
+    });
+
+    it('returns 404 when the starship does not exist', async () => {
+      jest.spyOn(service, 'getStarshipById').mockResolvedValue(null);
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/starships/99999' });
+
+      expect(response.statusCode).toBe(404);
+      expect(response.json()).toMatchObject({ error: 'STARSHIP_NOT_FOUND' });
+    });
+
+    it('returns 502 when SWAPI is unreachable', async () => {
+      jest.spyOn(service, 'getStarshipById').mockRejectedValue(new Error('SWAPI unreachable'));
+
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/starships/1' });
+
+      expect(response.statusCode).toBe(502);
+      expect(response.json()).toMatchObject({ error: 'SWAPI_FETCH_FAILED' });
+    });
+
+    it('rejects a non-numeric id', async () => {
+      const response = await app.inject({ method: 'GET', url: '/api/swapi/starships/abc' });
 
       expect(response.statusCode).toBe(400);
     });
