@@ -5,6 +5,7 @@ import {
   type ZodTypeProvider,
 } from '@fastify/type-provider-zod';
 import { env } from './config/env';
+import { registerCors } from './plugins/cors';
 import { registerStatic } from './plugins/static';
 import { registerSwagger } from './plugins/swagger';
 import { databankRoutes } from './modules/databank/databank.routes';
@@ -24,6 +25,7 @@ export async function buildApp() {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
+  await registerCors(app);
   await registerSwagger(app);
   await registerStatic(app);
   await app.register(databankRoutes);

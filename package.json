@@ -9,16 +9,30 @@
     "backend:dev": "npm run dev --workspace=apps/backend",
     "backend:build": "npm run build --workspace=apps/backend",
     "backend:test": "npm run test --workspace=apps/backend",
+    "mobile:start": "npm run start --workspace=apps/mobile",
+    "mobile:ios": "npm run ios --workspace=apps/mobile",
+    "mobile:android": "npm run android --workspace=apps/mobile",
+    "mobile:web": "npm run web --workspace=apps/mobile",
+    "mobile:test": "npm run test --workspace=apps/mobile",
     "prepare": "husky"
   },
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0"
   },
+  "overrides": {
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-test-renderer": "19.2.3"
+  },
   "lint-staged": {
     "apps/backend/**/*.ts": [
       "npm run lint:fix --workspace=apps/backend --",
       "npm run format --workspace=apps/backend --"
+    ],
+    "apps/mobile/**/*.{ts,tsx}": [
+      "npm run lint:fix --workspace=apps/mobile --",
+      "npm run format --workspace=apps/mobile --"
     ]
   }
 }
