@@ -1,6 +1,6 @@
 {
   "category": "characters",
-  "updatedAt": "2026-08-18T06:59:57.627Z",
+  "updatedAt": "2026-09-17T20:16:38.887Z",
   "count": 1148,
   "items": [
     {
@@ -18936,41 +18936,6 @@
       "href": "https://www.starwars.com/databank/gerdis"
     },
     {
-      "id": "616b346a9abb7492a01ad05b",
-      "slug": "gerrera-s-partisan-fighters",
-      "entity_type": "default",
-      "entity_config": {},
-      "title": "Gerrera's Partisan Fighters",
-      "featured_entity_translation": "Featured Content",
-      "description": "Loyal to Saw Gerrera, his unruly band of partisan fighters are fierce warriors eager to exact explosive retribution against the Galactic Empire.",
-      "short_desc": "Loyal to Saw Gerrera, his unruly band of partisan fighters are fierce warriors eager to exact explosive retribution against the Galactic Empire.",
-      "dynamic_desc": "Loyal to Saw Gerrera, his unruly band of partisan fighters are fierce warriors eager to exact explosive retribution against the Galactic Empire.",
-      "cta_button_title": "See More",
-      "images": {
-        "desktop": {
-          "desktop_2x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C43%2C1620%2C810",
-          "desktop_16x9": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C84%2C1620%2C911",
-          "desktop_4x3": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=90%2C0%2C1440%2C1080",
-          "desktop_1x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=270%2C0%2C1080%2C1080"
-        },
-        "alt_text": "Gerrera's Partisan Fighters"
-      },
-      "alt_text": "Gerrera's Partisan Fighters",
-      "base_images": {
-        "desktop": {
-          "ratio_16x9": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C84%2C1620%2C911",
-          "ratio_1x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=270%2C0%2C1080%2C1080",
-          "ratio_2x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C43%2C1620%2C810",
-          "ratio_4x3": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=90%2C0%2C1440%2C1080"
-        }
-      },
-      "section_label": "default",
-      "section_class": "default",
-      "is_encyclopedia_entry": true,
-      "type": "encyclopedia_entries",
-      "href": "https://www.starwars.com/databank/gerrera-s-partisan-fighters"
-    },
-    {
       "id": "616b2bcbc8b46492a01ad05b",
       "slug": "gha-nachkt",
       "entity_type": "default",
@@ -32113,51 +32078,6 @@
       "href": "https://www.starwars.com/databank/myn-weaver"
     },
     {
-      "id": "616b2eb05111d492a01ad05b",
-      "slug": "nail",
-      "entity_type": "default",
-      "entity_config": {},
-      "title": "Nail",
-      "featured_entity_translation": "Featured Content",
-      "description": "A gruff alien woman, Nail is Jyn Erso’s cellmate in Wobani’s grim LEG-817 labor camp. The other prisoners have given her the derisive nickname “Kennel” for the parasites infesting her filthy jacket. Nail is with Jyn aboard a repurposed turbo tank when rebel forces raid Wobani to free Jyn.",
-      "short_desc": "A gruff alien woman, Nail is Jyn Erso’s cellmate in Wobani’s grim LEG-817 labor camp. The other prisoners have given her the derisive nickname “Kennel” for the parasites infesting her filthy jacket. Nail is with Jyn aboard a repurposed turbo tank when rebel forces raid Wobani to free Jyn.",
-      "dynamic_desc": "A gruff alien woman, Nail is Jyn Erso’s cellmate in Wobani’s grim LEG-817 labor camp. The other prisoners have given her the derisive nickname “Kennel” for the parasites infesting her filthy jacket. Nail is with Jyn aboard a repurposed turbo tank when rebel forces raid Wobani to free Jyn.",
-      "cta_button_title": "See More",
-      "images": {
-        "desktop": {
-          "desktop_2x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C323%2C554%2C277",
-          "desktop_16x9": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C302%2C544%2C306",
-          "desktop_4x3": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=4%2C254%2C540%2C404",
-          "desktop_1x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=25%2C160%2C502%2C503"
-        },
-        "alt_text": "Nail in Rogue One: A Star Wars Story"
-      },
-      "alt_text": "Nail",
-      "base_images": {
-        "desktop": {
-          "ratio_16x9": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C302%2C544%2C306",
-          "ratio_1x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=25%2C160%2C502%2C503",
-          "ratio_2x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C323%2C554%2C277",
-          "ratio_4x3": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=4%2C254%2C540%2C404"
-        }
-      },
-      "section_label": "default",
-      "section_class": "default",
-      "categories": [
-        {
-          "name": "gender",
-          "properties": [
-            {
-              "name": "Female"
-            }
-          ]
-        }
-      ],
-      "is_encyclopedia_entry": true,
-      "type": "encyclopedia_entries",
-      "href": "https://www.starwars.com/databank/nail"
-    },
-    {
       "id": "616b2a2ee9f46492a01ad05b",
       "slug": "nala-se",
       "entity_type": "default",
@@ -34397,6 +34317,51 @@
       "is_encyclopedia_entry": true,
       "type": "encyclopedia_entries",
       "href": "https://www.starwars.com/databank/oola"
+    },
+    {
+      "id": "616b2eb05111d492a01ad05b",
+      "slug": "oolin-musters",
+      "entity_type": "default",
+      "entity_config": {},
+      "title": "Oolin Musters",
+      "featured_entity_translation": "Featured Content",
+      "description": "A gruff alien woman, Nail is Jyn Erso’s cellmate in Wobani’s grim LEG-817 labor camp. The other prisoners have given her the derisive nickname “Kennel” for the parasites infesting her filthy jacket. Nail is with Jyn aboard a repurposed turbo tank when rebel forces raid Wobani to free Jyn.",
+      "short_desc": "A gruff alien woman, Nail is Jyn Erso’s cellmate in Wobani’s grim LEG-817 labor camp. The other prisoners have given her the derisive nickname “Kennel” for the parasites infesting her filthy jacket. Nail is with Jyn aboard a repurposed turbo tank when rebel forces raid Wobani to free Jyn.",
+      "dynamic_desc": "A gruff alien woman, Nail is Jyn Erso’s cellmate in Wobani’s grim LEG-817 labor camp. The other prisoners have given her the derisive nickname “Kennel” for the parasites infesting her filthy jacket. Nail is with Jyn aboard a repurposed turbo tank when rebel forces raid Wobani to free Jyn.",
+      "cta_button_title": "See More",
+      "images": {
+        "desktop": {
+          "desktop_2x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C323%2C554%2C277",
+          "desktop_16x9": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C302%2C544%2C306",
+          "desktop_4x3": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=4%2C254%2C540%2C404",
+          "desktop_1x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=25%2C160%2C502%2C503"
+        },
+        "alt_text": "Oolin Musters"
+      },
+      "alt_text": "Oolin Musters",
+      "base_images": {
+        "desktop": {
+          "ratio_16x9": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C302%2C544%2C306",
+          "ratio_1x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=25%2C160%2C502%2C503",
+          "ratio_2x1": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=0%2C323%2C554%2C277",
+          "ratio_4x3": "https://lumiere-a.akamaihd.net/v1/images/nail-main_37f3e4a9.jpeg?region=4%2C254%2C540%2C404"
+        }
+      },
+      "section_label": "default",
+      "section_class": "default",
+      "categories": [
+        {
+          "name": "gender",
+          "properties": [
+            {
+              "name": "Female"
+            }
+          ]
+        }
+      ],
+      "is_encyclopedia_entry": true,
+      "type": "encyclopedia_entries",
+      "href": "https://www.starwars.com/databank/oolin-musters"
     },
     {
       "id": "616b2c4e447bf492a01ad05b",
@@ -41113,6 +41078,41 @@
       "is_encyclopedia_entry": true,
       "type": "encyclopedia_entries",
       "href": "https://www.starwars.com/databank/saw-gerrera"
+    },
+    {
+      "id": "616b346a9abb7492a01ad05b",
+      "slug": "saw-gerrera-s-partisan-fighters",
+      "entity_type": "default",
+      "entity_config": {},
+      "title": "Saw Gerrera's Partisan Fighters ",
+      "featured_entity_translation": "Featured Content",
+      "description": "Loyal to Saw Gerrera, his unruly band of partisan fighters are fierce warriors eager to exact explosive retribution against the Galactic Empire.",
+      "short_desc": "Loyal to Saw Gerrera, his unruly band of partisan fighters are fierce warriors eager to exact explosive retribution against the Galactic Empire.",
+      "dynamic_desc": "Loyal to Saw Gerrera, his unruly band of partisan fighters are fierce warriors eager to exact explosive retribution against the Galactic Empire.",
+      "cta_button_title": "See More",
+      "images": {
+        "desktop": {
+          "desktop_2x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C43%2C1620%2C810",
+          "desktop_16x9": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C84%2C1620%2C911",
+          "desktop_4x3": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=90%2C0%2C1440%2C1080",
+          "desktop_1x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=270%2C0%2C1080%2C1080"
+        },
+        "alt_text": "Saw Gerrera's Partisan Fighters "
+      },
+      "alt_text": "Saw Gerrera's Partisan Fighters ",
+      "base_images": {
+        "desktop": {
+          "ratio_16x9": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C84%2C1620%2C911",
+          "ratio_1x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=270%2C0%2C1080%2C1080",
+          "ratio_2x1": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=0%2C43%2C1620%2C810",
+          "ratio_4x3": "https://lumiere-a.akamaihd.net/v1/images/benthic-two-tubes-main_2dc38388.jpeg?region=90%2C0%2C1440%2C1080"
+        }
+      },
+      "section_label": "default",
+      "section_class": "default",
+      "is_encyclopedia_entry": true,
+      "type": "encyclopedia_entries",
+      "href": "https://www.starwars.com/databank/saw-gerreras-partisan-fighters"
     },
     {
       "id": "616b313cf2594492a01ad05b",
